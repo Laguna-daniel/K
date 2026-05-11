@@ -187,6 +187,124 @@ document.addEventListener("click", (e) => {
     if (navigator.vibrate) navigator.vibrate(30);
 });
 
+//=======MINI JUEGO========//
+
+let preguntaActual = 0;
+let puntos = 0;
+
+const preguntas = [
+    {
+        q: "que es lo que me gusta de ti? (yo se lo dije)",
+        opciones: ["mi pelo", "mis ojos", "todo"],
+        correcta: 2
+    },
+    {
+        q: "cual es mi comida favorita?",
+        opciones: ["salchipapa", "la hamburguesa", "todas"],
+        correcta: 0
+    },
+    {
+        q: "¿Qué dulce siempre prometo traerte?",
+        opciones: ["Gomitas", "Chocolate", "Helado"],
+        correcta: 1
+    },
+    {
+        q: "yo soy apego que ?",
+        opciones: ["evitativo", "cariñoso", "ansioso"],
+        correcta: 2
+    },
+    {
+        q: "que tipo de musica me gusta ?",
+        opciones: ["regueton actual", "regueton clasico", "el pop "],
+        correcta: 1
+    },
+    {
+        q: "¿Qué deporte te gusta y siempre digo que eres buena?",
+        opciones: ["Fútbol", "Voleibol", "Baloncesto"],
+        correcta: 2
+    }
+];
+
+function iniciarQuizPersonal() {
+    preguntaActual = 0;
+    puntos = 0;
+    document.getElementById("game-quiz").style.display = "flex";
+    mostrarPregunta();
+}
+
+function mostrarPregunta() {
+    const p = preguntas[preguntaActual];
+    document.getElementById("pregunta-text").innerHTML = `<strong>${p.q}</strong>`;
+    
+    const opcionesDiv = document.getElementById("opciones");
+    opcionesDiv.innerHTML = "";
+
+    p.opciones.forEach((opcion, index) => {
+        const btn = document.createElement("button");
+        btn.className = "opcion";
+        btn.textContent = opcion;
+        btn.onclick = () => responder(index);
+        opcionesDiv.appendChild(btn);
+    });
+
+    document.getElementById("feedback").innerHTML = "";
+}
+
+function responder(respuesta) {
+    const correcta = preguntas[preguntaActual].correcta;
+
+    if (respuesta === correcta) {
+        puntos += 20;
+        document.getElementById("feedback").style.color = "#22c55e";
+        document.getElementById("feedback").textContent = "✅ ¡Correcto!";
+    } else {
+        document.getElementById("feedback").style.color = "#ef4444";
+        document.getElementById("feedback").textContent = "❌ Incorrecto";
+    }
+
+    // Espera un momento antes de pasar a la siguiente pregunta
+    setTimeout(() => {
+        preguntaActual++;
+        if (preguntaActual < preguntas.length) {
+            mostrarPregunta();
+        } else {
+            mostrarResultadoFinal();
+        }
+    }, 1400);
+}
+
+function mostrarResultadoFinal() {
+    const container = document.querySelector(".quiz-container");
+    
+    let mensaje = "";
+    if (puntos >= 100) mensaje = "Me conoces muy bien, me alegro eso jsjsjsjs ";
+    else if (puntos >= 60) mensaje = "No está mal, pero puedes conocerme más";
+    else mensaje = "Parece que no me prestas mucha atención...";
+
+    container.innerHTML = `
+        <h2>¡Quiz Terminado!</h2>
+        <p style="font-size:2.3rem; margin:25px 0;">${puntos} puntos</p>
+        <p style="font-size:1.35rem; margin:20px 0;">${mensaje}</p>
+        
+        <p style="font-size:1.5rem; color:#9333ea; margin:35px 0; line-height:1.4; font-weight:bold;">
+            Bueno... si me conoces,<br>
+            pero por qué me dejas atrás cuando bajamos del colegio?
+        </p>
+
+        <button class="btn-principal" onclick="reiniciarQuiz()">Hacer el quiz de nuevo</button>
+        <button class="btn-principal" onclick="cerrarQuiz()" style="background:#64748b;">Volver</button>
+    `;
+}
+
+function reiniciarQuiz() {
+    // Recarga la interfaz del contenedor original antes de reiniciar
+    location.reload(); 
+}
+
+function cerrarQuiz() {
+    document.getElementById("game-quiz").style.display = "none";
+}
+
 // ==================== EXPOSICIÓN GLOBAL DE FUNCIONES ====================
 
 window.reproducirCancion = reproducirCancion;

@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>🌸 Mundo de Michell 🌸</title>
-    
+
     <!-- Font Awesome 6 (iconos) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+
     <!-- Estilos externos -->
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -101,6 +101,21 @@
                 </span>
             </div>
 
+        </div>
+
+        <!-- Botón para iniciar el quiz -->
+        <button class="btn-principal" onclick="iniciarQuizPersonal()">
+            ❓ ¿Cuánto me conoces? (Quiz)
+        </button>
+
+        <!-- Contenedor del Quiz -->
+        <div id="game-quiz" class="game-screen">
+            <div class="quiz-container">
+                <h2>❓ ¿Cuánto me conoces?</h2>
+                <p id="pregunta-text"></p>
+                <div id="opciones"></div>
+                <p id="feedback"></p>
+            </div>
         </div>
 
         <!-- Botón mensaje especial -->
