@@ -1,897 +1,145 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>El rincón de Michell</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&family=Special+Elite&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg:         #06060a;
-  --bg2:        #0c0c10;
-  --surface:    #0f0f14;
-  --card-bg:    #111118;
-  --border:     rgba(255,255,255,0.05);
-  --text-dim:   #2e2e3d;
-  --text-mid:   #4a4a62;
-  --text-main:  #70708a;
-  --accent:     #252535;
-  --glow:       rgba(60,40,80,0.1);
-}
-.alive {
-  --bg:         #fdf6ff;
-  --bg2:        #f3e8ff;
-  --surface:    #f7eeff;
-  --card-bg:    #ffffff;
-  --border:     rgba(168,85,247,0.15);
-  --text-dim:   #d8b4fe;
-  --text-mid:   #9333ea;
-  --text-main:  #6b21a8;
-  --accent:     #e9d5ff;
-  --glow:       rgba(168,85,247,0.2);
-}
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
-body{
-  font-family:'DM Sans',sans-serif;
-  background:var(--bg);
-  color:var(--text-main);
-  min-height:100vh;
-  overflow-x:hidden;
-  transition:background 2.5s ease,color 2s ease;
-}
-/* Grano de película */
-body::before{
-  content:'';position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:9998;opacity:.7;
-  transition:opacity 2s ease;
-}
-body.alive::before{opacity:.2;}
-#flash{position:fixed;inset:0;background:#fff;opacity:0;z-index:600;pointer-events:none;transition:opacity 1.2s ease;}
- 
-/* ─── CENIZA AMBIENTAL ─── */
-.ceniza{
-  position:fixed;pointer-events:none;z-index:9997;
-  font-size:.45rem;color:rgba(120,100,150,.15);
-  animation:caerCeniza linear forwards;
-}
-@keyframes caerCeniza{
-  0%  {transform:translateY(-20px) rotate(0deg);opacity:.5;}
-  100%{transform:translateY(110vh) rotate(720deg);opacity:0;}
-}
- 
-/* ─── PANTALLA ENTRADA ─── */
-#entrada{
-  position:fixed;inset:0;
-  background:radial-gradient(ellipse at 50% 65%,#0d0810 0%,#050408 55%,#000 100%);
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  z-index:100;text-align:center;padding:2rem;
-  transition:opacity 1.4s ease;overflow:hidden;
-}
-/* vignette borde */
-#entrada::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(0,0,0,.7) 100%);
-  pointer-events:none;
-}
-/* grieta sutil */
-#entrada::after{
-  content:'';position:absolute;inset:0;
-  background:
-    linear-gradient(to bottom right,transparent 49.3%,rgba(100,70,140,.05) 49.3%,rgba(100,70,140,.05) 50.7%,transparent 50.7%),
-    linear-gradient(170deg,transparent 59%,rgba(80,60,120,.04) 59%,rgba(80,60,120,.04) 60%,transparent 60%);
-  pointer-events:none;
-}
-.entrada-vela{
-  font-size:2.2rem;opacity:.2;margin-bottom:2rem;
-  animation:parpadeoVela 3.5s ease-in-out infinite;
-  position:relative;z-index:1;
-}
-@keyframes parpadeoVela{
-  0%,100%{opacity:.2;transform:scaleY(1);}
-  30%    {opacity:.1;transform:scaleY(.95);}
-  65%    {opacity:.25;transform:scaleY(1.03);}
-}
-.entrada-eyebrow{
-  font-family:'Special Elite',cursive;
-  font-size:.68rem;letter-spacing:.38em;text-transform:uppercase;
-  color:#1e1e2c;margin-bottom:2rem;
-  animation:fadeUp .9s ease both;position:relative;z-index:1;
-}
-#entrada h1{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(2.8rem,9vw,5.5rem);
-  font-weight:400;line-height:1.08;
-  color:#1c1c26;
-  text-shadow:0 0 60px rgba(70,40,100,.2),0 2px 6px rgba(0,0,0,.9);
-  animation:fadeUp .9s .15s ease both;
-  position:relative;z-index:1;
-}
-#entrada h1 em{font-style:italic;color:#24242f;}
-.entrada-subtitulo{
-  font-family:'Special Elite',cursive;
-  font-size:.75rem;color:#161620;
-  margin-top:.9rem;letter-spacing:.16em;opacity:.55;
-  animation:fadeUp .9s .28s ease both;position:relative;z-index:1;
-}
-.btn-entrar{
-  margin-top:3.2rem;padding:.9rem 2.8rem;
-  background:transparent;border:1px solid #181824;
-  color:#28283a;border-radius:2px;
-  font-family:'Special Elite',cursive;
-  font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;
-  cursor:pointer;
-  transition:border-color .5s,color .5s,box-shadow .5s,background .5s;
-  animation:fadeUp .9s .42s ease both;position:relative;z-index:1;
-}
-.btn-entrar:hover{
-  border-color:#32324a;color:#3e3e58;
-  background:rgba(255,255,255,.015);
-  box-shadow:0 0 36px rgba(60,40,100,.14),inset 0 0 16px rgba(255,255,255,.01);
-}
- 
-/* ─── MAIN ─── */
-#main{display:none;max-width:860px;margin:0 auto;padding:5rem 1.5rem 8rem;}
- 
-.section-tag{
-  font-family:'Special Elite',cursive;
-  font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;
-  color:var(--text-dim);margin-bottom:1rem;
-}
-.section-title{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.8rem,5vw,2.8rem);
-  font-weight:400;color:var(--text-main);
-  margin-bottom:.5rem;line-height:1.15;
-}
-.section-title em{font-style:italic;color:var(--text-mid);}
-.section-sub{
-  font-size:.88rem;color:var(--text-dim);
-  font-style:italic;margin-bottom:2.8rem;line-height:1.7;
-}
- 
-/* ─── BARRA PROGRESO ─── */
-#progreso-wrap{display:flex;align-items:center;gap:10px;margin-bottom:2.2rem;}
-#progreso-bar-bg{flex:1;height:1px;background:var(--border);border-radius:100px;overflow:hidden;}
-#progreso-bar-fill{height:100%;background:var(--text-dim);border-radius:100px;width:0%;transition:width .6s cubic-bezier(.4,0,.2,1);}
-#progreso-texto{font-size:.7rem;color:var(--text-dim);white-space:nowrap;font-family:'Special Elite',cursive;letter-spacing:.06em;}
- 
-/* ─── GRID FRAGMENTOS ─── */
-.grid-fragmentos{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
-  gap:12px;
-}
-.fragmento{
-  background:var(--card-bg);border:1px solid var(--border);
-  border-radius:4px;padding:1.6rem 1rem 1.4rem;
-  text-align:center;cursor:pointer;
-  transition:border-color .3s,box-shadow .3s;
-  position:relative;overflow:visible;
-  font-family:'Special Elite',cursive;
-  font-size:.85rem;color:var(--text-mid);letter-spacing:.04em;
-}
-.fragmento .emoji{
-  display:block;font-size:1.8rem;margin-bottom:.5rem;
-  transition:transform .4s cubic-bezier(.34,1.56,.64,1),filter .3s;
-  filter:grayscale(1) brightness(.4);
-}
-.fragmento:hover{border-color:var(--text-dim);}
-.fragmento:hover .emoji{transform:scale(1.18) rotate(-5deg);filter:grayscale(.3) brightness(.65);}
- 
-/* Tooltip frase triste */
-.frase-tip{
-  visibility:hidden;opacity:0;
-  position:absolute;bottom:calc(100% + 10px);left:50%;
-  transform:translateX(-50%) translateY(4px);
-  background:#080810;border:1px solid #161626;
-  border-radius:4px;padding:.5rem .9rem;
-  font-size:.72rem;color:#2c2c44;
-  white-space:nowrap;pointer-events:none;
-  font-family:'DM Sans',sans-serif;font-style:italic;
-  z-index:50;
-  transition:opacity .25s ease,transform .25s ease,visibility .25s;
-}
-.frase-tip::after{
-  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
-  border:5px solid transparent;border-top-color:#161626;
-}
-.fragmento:hover .frase-tip{visibility:visible;opacity:1;transform:translateX(-50%) translateY(0);}
- 
-.fragmento.cayendo{
-  animation:caida .75s cubic-bezier(.36,.07,.19,.97) both;pointer-events:none;
-}
-@keyframes caida{
-  0%  {transform:translateY(0) rotate(0deg) scale(1);opacity:1;}
-  35% {transform:translateY(8px) rotate(10deg) scale(.92);opacity:.5;}
-  100%{transform:translateY(130vh) rotate(60deg) scale(.15);opacity:0;}
-}
- 
-/* ─── DECISIÓN ─── */
-#decision{display:none;text-align:center;padding:3.5rem 0;animation:fadeUp .7s ease both;}
-.decision-icon{
-  font-size:4rem;margin-bottom:1.8rem;display:block;
-  animation:balanceo 5s ease-in-out infinite;
-  filter:grayscale(1) brightness(.35);
-}
-@keyframes balanceo{0%,100%{transform:rotate(-6deg);}50%{transform:rotate(6deg);}}
-.decision-pregunta{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(1.2rem,3.5vw,1.75rem);
-  font-weight:400;color:var(--text-main);
-  margin-bottom:.8rem;line-height:1.45;
-}
-.decision-sub{font-size:.85rem;color:var(--text-dim);font-style:italic;margin-bottom:2.6rem;line-height:1.6;}
-.btn-group{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;}
-.btn-luz{
-  padding:.9rem 2.2rem;border-radius:100px;
-  background:linear-gradient(135deg,#7c3aed,#a855f7);
-  color:#fff;border:none;font-family:'DM Sans',sans-serif;
-  font-size:.9rem;cursor:pointer;letter-spacing:.04em;
-  box-shadow:0 4px 24px rgba(124,58,237,.3);
-  transition:transform .2s,box-shadow .3s;
-}
-.btn-luz:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(124,58,237,.5);}
-.btn-olvido{
-  padding:.9rem 2.2rem;border-radius:100px;
-  background:transparent;color:var(--text-dim);
-  border:1px solid var(--accent);font-family:'DM Sans',sans-serif;
-  font-size:.9rem;cursor:pointer;letter-spacing:.04em;
-  transition:border-color .3s,color .3s;
-}
-.btn-olvido:hover{border-color:var(--text-mid);color:var(--text-mid);}
- 
-/* ─── FINAL TRISTE ─── */
-#final-olvido{
-  display:none;flex-direction:column;
-  align-items:center;justify-content:center;
-  padding:4rem 2rem;min-height:70vh;
-  animation:fadeUp 1s ease both;
-}
-.olvido-marco{
-  border:1px solid #0e0e1c;border-radius:2px;
-  padding:3rem 2.5rem;max-width:500px;width:100%;
-  position:relative;background:rgba(6,6,12,.7);
-  text-align:center;
-}
-/* esquinas decorativas */
-.olvido-marco::before,.olvido-marco::after{
-  content:'';position:absolute;width:36px;height:36px;border-color:#0d0d1a;border-style:solid;
-}
-.olvido-marco::before{top:-1px;right:-1px;border-width:1px 1px 0 0;}
-.olvido-marco::after {bottom:-1px;left:-1px; border-width:0 0 1px 1px;}
- 
-.olvido-icono{
-  font-size:3rem;opacity:.1;margin-bottom:1.8rem;
-  display:block;filter:grayscale(1);
-  animation:desvaneceIcono 10s ease forwards;
-}
-@keyframes desvaneceIcono{
-  0%  {opacity:.12;transform:rotate(-3deg) scale(1);}
-  100%{opacity:.02;transform:rotate(18deg) scale(.4) translateY(28px);}
-}
-.olvido-linea{width:22px;height:1px;background:#101020;margin:1.6rem auto;}
-.olvido-titulo{
-  font-family:'Special Elite',cursive;
-  font-size:1rem;color:#14141e;letter-spacing:.2em;text-transform:uppercase;
-  margin-bottom:.5rem;line-height:1.6;
-  animation:aparecer 2.5s 1s ease both;
-}
-.olvido-texto-wrap{
-  font-family:'Playfair Display',serif;
-  font-size:1.3rem;font-weight:400;font-style:italic;
-  color:#161624;line-height:1.7;min-height:3em;
-  animation:aparecer 2.5s 2.5s ease both;
-}
-.olvido-firma{
-  font-family:'Special Elite',cursive;
-  font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;
-  color:#0e0e1c;margin-top:2rem;
-  animation:aparecer 2.5s 6s ease both;
-}
-@keyframes aparecer{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
- 
-/* grietas de pantalla */
-.grieta{
-  position:fixed;pointer-events:none;z-index:9996;
-  background:linear-gradient(to bottom,transparent,rgba(255,255,255,.018),transparent);
-  width:1px;top:0;height:100vh;
-  animation:grietaFade 18s ease forwards;
-}
-@keyframes grietaFade{0%{opacity:0;}20%{opacity:1;}100%{opacity:.25;};}
- 
-/* ─── MUNDO VIVO ─── */
-#mundo-vivo{display:none;animation:fadeUp .8s ease both;}
-.vivo-header{text-align:center;margin-bottom:1rem;padding-top:.5rem;}
-.vivo-header h2{
-  font-family:'Playfair Display',serif;
-  font-size:clamp(2rem,6vw,3.4rem);
-  font-weight:400;line-height:1.15;color:var(--text-mid);
-}
-.vivo-header h2 em{font-style:italic;}
-.vivo-subtitulo{font-size:.88rem;color:var(--text-dim);margin-top:.7rem;letter-spacing:.12em;}
-.separador{width:36px;height:1px;background:var(--accent);margin:2rem auto 2.6rem;}
- 
-.grid-vivo{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
-  gap:14px;margin-bottom:2rem;
-}
-.card-vivo{
-  background:var(--card-bg);border:1px solid var(--border);
-  border-radius:20px;padding:1.6rem 1.4rem;
-  transition:transform .3s,box-shadow .3s;
-  position:relative;overflow:hidden;
-}
-.card-vivo::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(circle at 30% 0%,rgba(168,85,247,.04),transparent 60%);
-  pointer-events:none;
-}
-.card-vivo:hover{transform:translateY(-4px);box-shadow:0 12px 32px var(--glow);}
-.card-vivo .cat{font-size:.67rem;text-transform:uppercase;letter-spacing:.18em;color:var(--text-dim);margin-bottom:.5rem;}
-.card-vivo .emoji-ico{font-size:1.7rem;margin-bottom:.6rem;display:block;}
-.card-vivo .valor{
-  font-family:'Playfair Display',serif;
-  font-size:1.1rem;color:var(--text-mid);font-weight:400;line-height:1.4;
-}
-.card-vivo .nota-card{margin-top:.4rem;font-size:.76rem;font-style:italic;color:var(--text-dim);}
- 
-.tag-interactivo{
-  display:inline-block;margin-top:.6rem;
-  background:var(--accent);color:var(--text-mid);
-  font-size:.76rem;padding:.3rem .85rem;
-  border-radius:100px;cursor:pointer;
-  transition:background .25s,color .25s,transform .2s;
-}
-.tag-interactivo:hover{background:var(--text-dim);color:var(--card-bg);transform:scale(1.04);}
- 
-/* ondas musicales */
-.ondas{display:flex;align-items:center;gap:3px;margin-top:.7rem;height:18px;}
-.nota-bar{
-  width:3px;border-radius:2px;background:var(--text-dim);
-  animation:ondaBar 1.3s ease-in-out infinite;
-}
-.nota-bar:nth-child(2){animation-delay:.15s;height:10px;}
-.nota-bar:nth-child(3){animation-delay:.3s;height:14px;}
-.nota-bar:nth-child(1){height:7px;}
-@keyframes ondaBar{0%,100%{transform:scaleY(1);opacity:.4;}50%{transform:scaleY(2.2);opacity:.9;}}
- 
-/* animales tags */
-.animalitos{display:flex;gap:6px;margin-top:.5rem;flex-wrap:wrap;}
-.tag-animal{
-  font-size:.76rem;padding:.22rem .6rem;
-  background:var(--accent);border-radius:100px;color:var(--text-mid);
-}
- 
-/* fuego cantante */
-.fuego{display:inline-block;animation:fuego 1.1s ease-in-out infinite alternate;}
-@keyframes fuego{from{transform:scale(1) rotate(-3deg);}to{transform:scale(1.18) rotate(3deg);}}
- 
-/* card mensaje */
-.card-mensaje{grid-column:1/-1;border-color:rgba(168,85,247,.15);}
-.card-mensaje .texto-mensaje{
-  font-family:'Playfair Display',serif;
-  font-size:.98rem;font-style:italic;
-  color:var(--text-mid);line-height:1.85;margin-top:.6rem;
-}
-.card-mensaje .firma-mensaje{margin-top:1rem;font-size:.78rem;color:var(--text-dim);letter-spacing:.08em;}
- 
-/* quiz botón */
-.btn-quiz{
-  display:block;margin:2rem auto;
-  padding:.85rem 2.4rem;background:transparent;
-  border:1px solid var(--border);color:var(--text-dim);
-  border-radius:100px;font-family:'DM Sans',sans-serif;
-  font-size:.86rem;cursor:pointer;letter-spacing:.04em;
-  transition:border-color .3s,color .3s,box-shadow .3s;
-}
-.btn-quiz:hover{border-color:var(--text-mid);color:var(--text-mid);box-shadow:0 0 20px var(--glow);}
- 
-/* overlay quiz */
-#overlay-quiz{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,.88);z-index:400;
-  align-items:center;justify-content:center;
-  backdrop-filter:blur(4px);
-}
-.quiz-box{
-  background:var(--card-bg);border:1px solid var(--border);
-  border-radius:20px;padding:2.5rem 2rem;
-  width:90%;max-width:500px;text-align:center;
-}
-.quiz-box h3{
-  font-family:'Playfair Display',serif;
-  font-size:1.4rem;color:var(--text-mid);margin-bottom:1.6rem;
-}
-.quiz-pregunta{font-size:.94rem;color:var(--text-main);margin-bottom:1.4rem;line-height:1.6;min-height:56px;}
-.quiz-opciones{display:flex;flex-direction:column;gap:10px;margin-bottom:1rem;}
-.btn-opcion{
-  padding:.8rem 1.2rem;background:var(--surface);
-  border:1px solid var(--border);border-radius:12px;
-  color:var(--text-mid);cursor:pointer;font-size:.88rem;
-  font-family:'DM Sans',sans-serif;
-  transition:background .2s,border-color .2s,transform .15s;
-}
-.btn-opcion:hover{background:var(--accent);border-color:var(--text-dim);transform:scale(1.02);}
-.btn-opcion.correcto{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.4);color:#4ade80;}
-.btn-opcion.incorrecto{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:#f87171;}
-.quiz-feedback{font-size:.86rem;min-height:1.2rem;font-style:italic;color:var(--text-dim);margin-bottom:.8rem;}
-.quiz-cerrar{background:transparent;border:none;color:var(--text-dim);font-size:.78rem;cursor:pointer;letter-spacing:.06em;font-family:'DM Sans',sans-serif;margin-top:.4rem;}
-.quiz-cerrar:hover{color:var(--text-mid);}
- 
-/* reiniciar */
-.btn-reiniciar{
-  display:block;margin:2.4rem auto 0;
-  padding:.85rem 2.4rem;background:transparent;
-  border:1px solid var(--border);color:var(--text-dim);
-  border-radius:100px;font-family:'DM Sans',sans-serif;
-  font-size:.84rem;cursor:pointer;letter-spacing:.04em;
-  transition:border-color .3s,color .3s;
-}
-.btn-reiniciar:hover{border-color:var(--text-mid);color:var(--text-mid);}
- 
-/* corazones flotantes */
-.corazon-float{position:fixed;pointer-events:none;z-index:300;will-change:transform,opacity;}
- 
-/* pop click */
-.pop-click{position:fixed;pointer-events:none;z-index:9990;animation:popClick .7s ease forwards;}
-@keyframes popClick{0%{transform:scale(.3) translateY(0);opacity:1;}100%{transform:scale(2) translateY(-30px);opacity:0;}}
- 
-/* global */
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
- 
-@media(max-width:480px){
-  .btn-group{flex-direction:column;align-items:center;}
-  .grid-fragmentos{grid-template-columns:repeat(2,1fr);}
-  .card-mensaje{grid-column:unset;}
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>🌸 Mundo de Michell 🌸</title>
+
+    <!-- Font Awesome 6 (iconos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Estilos externos -->
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
- 
-<div id="flash"></div>
- 
-<!-- ══════════ ENTRADA ══════════ -->
-<div id="entrada">
-  <span class="entrada-vela">🕯️</span>
-  <p class="entrada-eyebrow">† lo que fue · lo que no será †</p>
-  <h1>El rincón de<br><em>Michell</em></h1>
-  <p class="entrada-subtitulo">— polvo, silencio y memoria —</p>
-  <button class="btn-entrar" onclick="entrar()">Abrir lo que queda</button>
-</div>
- 
-<!-- ══════════ MAIN ══════════ -->
-<div id="main">
- 
-  <!-- FASE RUINAS -->
-  <div id="fase-ruinas">
-    <p class="section-tag">† fragmentos perdidos †</p>
-    <h2 class="section-title">Lo que quedó de <em>Michell</em></h2>
-    <p class="section-sub">Recuerdos que se desmoronan. Tócalos antes de que desaparezcan para siempre.</p>
- 
-    <div id="progreso-wrap">
-      <div id="progreso-bar-bg"><div id="progreso-bar-fill"></div></div>
-      <span id="progreso-texto">0 / 8</span>
+
+    <!-- PANTALLA DE INICIO CON MAGIA -->
+    <div id="inicio">
+        <h1>🌸 El rincón de Michell 🌸</h1>
+        <p>He preparado esta página para que usted<br>✨ con uvas, chocolate y mucha ternura ✨</p>
+        <button onclick="entrarAlMundo()">Abrir sorpresa 🎁</button>
     </div>
- 
-    <div class="grid-fragmentos">
-      <div class="fragmento" onclick="caer(this)">
-        <span class="frase-tip">Rapunzel nunca salió de su torre...</span>
-        <span class="emoji">🎬</span>Rapunzel
-      </div>
-      <div class="fragmento" onclick="caer(this)">
-        <span class="frase-tip">El chocolate ya no sabe a nada...</span>
-        <span class="emoji">🍫</span>Chocolate
-      </div>
-      <div class="fragmento" onclick="caer(this)">
-        <span class="frase-tip">Esa canción ya no suena para nadie...</span>
-        <span class="emoji">🎵</span>Dulce Carita
-      </div>
-      <div class="fragmento" onclick="caer(this)">
-        <span class="frase-tip">Nadie dedica canciones al vacío...</span>
-        <span class="emoji">🎤</span>Maluma
-      </div>
-      <div class="fragmento" onclick="caer(this)">
-        <span class="frase-tip">El balón cayó y no volvió...</span>
-        <span class="emoji">🏐</span>Voleibol
-      </div>
-      <div class="fragmento" onclick="caer(this)">
-        <span class="frase-tip">El agua fría no recuerda nombres...</span>
-        <span class="emoji">🧜‍♀️</span>Natación
-      </div>
-      <div class="fragmento" onclick="caer(this)">
-        <span class="frase-tip">Las uvas se secaron en la vid...</span>
-        <span class="emoji">🍇</span>Uvas
-      </div>
-      <div class="fragmento" onclick="caer(this)">
-        <span class="frase-tip">El cacao amarga sin alguien que lo comparta...</span>
-        <span class="emoji">💜</span>Cacao
-      </div>
-    </div>
-  </div>
- 
-  <!-- DECISIÓN -->
-  <div id="decision">
-    <span class="decision-icon" id="decision-icon">🫙</span>
-    <h2 class="decision-pregunta" id="decision-pregunta">
-      Todo cayó al vacío.<br>¿Qué harás ahora?
-    </h2>
-    <p class="decision-sub" id="decision-sub">El frasco está roto, pero algo todavía se puede salvar.</p>
-    <div class="btn-group" id="btn-group-decision">
-      <button class="btn-luz" onclick="finalLuz()">Traer la luz ✨</button>
-      <button class="btn-olvido" onclick="finalOlvido()">Dejar en el olvido 🍂</button>
-    </div>
-  </div>
- 
-  <!-- FINAL TRISTE -->
-  <div id="final-olvido">
-    <div class="olvido-marco">
-      <span class="olvido-icono">🫙</span>
-      <div class="olvido-linea"></div>
-      <p class="olvido-titulo">Este lugar ya no existe</p>
-      <div class="olvido-linea"></div>
-      <p class="olvido-texto-wrap" id="olvido-texto-animado"></p>
-      <div class="olvido-linea"></div>
-      <p class="olvido-firma">— el rincón de michell · olvidado —</p>
-    </div>
-  </div>
- 
-  <!-- MUNDO VIVO -->
-  <div id="mundo-vivo">
-    <div class="vivo-header">
-      <h2>✨ El rincón de <em>Michell</em> ✨</h2>
-      <p class="vivo-subtitulo">〰️ cada detalle está hecho con magia 〰️</p>
-    </div>
-    <div class="separador"></div>
- 
-    <div class="grid-vivo">
- 
-      <div class="card-vivo">
-        <span class="emoji-ico">🎬</span>
-        <p class="cat">Película favorita</p>
-        <p class="valor">✨ Rapunzel ✨</p>
-        <p class="nota-card">"sus ojos brillan como miles de linternas"</p>
-      </div>
- 
-      <div class="card-vivo">
-        <span class="emoji-ico">🍫</span>
-        <p class="cat">Dulce favorito</p>
-        <p class="valor">¡Chocolate!</p>
-        <span class="tag-interactivo" onclick="sorpresaChoco()">Una chocolatina real 💖</span>
-      </div>
- 
-      <div class="card-vivo">
-        <span class="emoji-ico">🎧</span>
-        <p class="cat">Canción del corazón</p>
-        <p class="valor">Dulce Carita<br><small style="font-size:.82rem;opacity:.7;">— Dalmata</small></p>
-        <div class="ondas">
-          <div class="nota-bar"></div>
-          <div class="nota-bar"></div>
-          <div class="nota-bar"></div>
-          <span style="font-size:.7rem;color:var(--text-dim);margin-left:5px;font-style:italic;">suena para ti</span>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="container" id="contenido">
+
+        <h2>✨ Cositas que te gustan, Michell ✨</h2>
+        <div class="sub">〰️ cada detalle está hecho con magia 〰️</div>
+
+        <div class="cards">
+
+            <!-- 1. Película favorita: Rapunzel -->
+            <div class="card">
+                🎬 <strong>Película favorita:</strong><br>
+                <span class="destacado">✨ Rapunzel ✨</span>
+                <div style="margin-top:10px; font-size:0.85rem;">"sus ojos brillan como miles de linternas"</div>
+            </div>
+
+            <!-- 2. Chocolate favorito + sorpresa -->
+            <div class="card">
+                🍫 <strong>Dulce favorito:</strong><br>
+                <span class="clickable" onclick="mostrarSorpresaDulce()">
+                    🍬 ¡Chocolate! <i class="fa-regular fa-heart"></i>
+                </span>
+                <div id="sorpresaChoco" class="sorpresaBox">
+                    <span>🍫✨</span>
+                    <p>🍫 Una chocolatina especial (cuando nos veamos) 🍫</p>
+                </div>
+            </div>
+
+            <!-- 3. Música / canción favorita -->
+            <div class="card">
+                🎧 <strong>Canción que te dedico:</strong><br>
+                <span class="clickable" onclick="reproducirCancion()">
+                    🎵 "Dulce Carita" - Dalmata 🎵 <i class="fa-solid fa-play"></i>
+                </span>
+                <div id="playerHint" style="margin-top:12px; font-size:0.8rem;"></div>
+            </div>
+
+            <!-- 4. Cantante favorito: Maluma -->
+            <div class="card">
+                🎤 <strong>Cantantes fav:</strong><br>
+                <span class="destacado">Maluma baby 🔥</span>
+                <div style="margin-top:8px;">"le dedico Vente Pa' Ca en el minuto 3:22"</div>
+            </div>
+
+            <!-- 5. Deporte favorito: Voleibol + natación -->
+            <div class="card">
+                🏐 <strong>Deporte estrella:</strong><br>
+                Voleibol 🏐 + <span class="destacado">Natación 🧜‍♀️</span>
+                <div style="margin-top:5px;"><i>"usted es buena en los dos"</i></div>
+            </div>
+
+            <!-- 6. Animal especial + Cabrita deseada -->
+            <div class="card">
+                🐾 <strong>Animal soñado:</strong><br>
+                🐕 Perro · 🐎 Caballo · 🐐 ¡La cabrita!
+                <span class="clickable" onclick="sonidoCabritaAnimada()">
+                    <i class="fa-solid fa-ear-listen"></i> esos son no??
+                </span>
+                <div id="baaSoundEffect" style="margin-top:10px; font-weight:bold;"></div>
+            </div>
+
+            <!-- 7. Fruta VIP: UVAS -->
+            <div class="card">
+                🍇 <strong>Fruta VIP:</strong><br>
+                Uvas 🍇 dulces como tú
+                <span class="clickable" onclick="chisteUvaInteractivo()">
+                    <i class="fa-regular fa-face-smile"></i> Chiste uvoso
+                </span>
+                <div id="chisteUvaBox" style="margin-top:10px; font-size:0.9rem;"></div>
+            </div>
+
+            <!-- 8. Un extra: emergencia cacao -->
+            <div class="card">
+                💜 <strong>Emergencia Cacao:</strong><br>
+                ➡️ Si ignoro a Michell → Chocolate 🍫
+                <span class="clickable" onclick="lluviaDeChocolates()">
+                    <i class="fa-solid fa-cloud-rain"></i> ya sabe no? jajajaj
+                </span>
+            </div>
+
         </div>
-      </div>
- 
-      <div class="card-vivo">
-        <span class="emoji-ico">🎤</span>
-        <p class="cat">Cantante favorito</p>
-        <p class="valor">Maluma baby <span class="fuego">🔥</span></p>
-        <p class="nota-card">"le dedico Vente Pa' Ca, minuto 3:22"</p>
-      </div>
- 
-      <div class="card-vivo">
-        <span class="emoji-ico">🏐</span>
-        <p class="cat">Deportes estrella</p>
-        <p class="valor">Voleibol &amp; Natación 🧜‍♀️</p>
-        <p class="nota-card">"usted es buena en los dos"</p>
-      </div>
- 
-      <div class="card-vivo">
-        <span class="emoji-ico">🐐</span>
-        <p class="cat">Animales soñados</p>
-        <p class="valor">Sus favoritos</p>
-        <div class="animalitos">
-          <span class="tag-animal">🐕 Perro</span>
-          <span class="tag-animal">🐎 Caballo</span>
-          <span class="tag-animal">🐐 Cabrita</span>
+
+        <!-- Botón para iniciar el quiz -->
+        <button class="btn-principal" onclick="iniciarQuizPersonal()">
+            ❓ ¿Cuánto me conoces? (Quiz)
+        </button>
+
+        <!-- Contenedor del Quiz -->
+        <div id="game-quiz" class="game-screen">
+            <div class="quiz-container">
+                <h2>❓ ¿Cuánto me conoces?</h2>
+                <p id="pregunta-text"></p>
+                <div id="opciones"></div>
+                <p id="feedback"></p>
+            </div>
         </div>
-      </div>
- 
-      <div class="card-vivo">
-        <span class="emoji-ico">🍇</span>
-        <p class="cat">Fruta VIP</p>
-        <p class="valor">Uvas 🍇</p>
-        <p class="nota-card">dulces como tú</p>
-      </div>
- 
-      <div class="card-vivo">
-        <span class="emoji-ico">💜</span>
-        <p class="cat">Protocolo de emergencia</p>
-        <p class="valor">Si me ignora → Chocolate 🍫</p>
-        <span class="tag-interactivo" onclick="lluviaCacao()">activar protocolo 🌧️</span>
-      </div>
- 
-      <div class="card-vivo card-mensaje">
-        <p class="cat">🎁 Para ti, Michell</p>
-        <p class="texto-mensaje">
-          "Como nadie te había hecho una página así, yo la hice con mucho cariño. Acá está todo lo que te gusta.
-          Espero que te saque una sonrisa. Además, prometo chocolatina real y cuando tenga plata una cabrita (real si se puede).
-          Tú eres única, atenta, reservada y muy chistosa. Mala conmigo pero sí jsjsjs. ¿Te gustó?"
-        </p>
-        <p class="firma-mensaje">💜 Con magia, el que siempre la quiere consentir 💜</p>
-      </div>
- 
+
+        <!-- Botón mensaje especial -->
+        <button class="btn-principal" onclick="mensajeSorpresa()">
+            🎁 Tengo algo que decirte <i class="fa-regular fa-message"></i>
+        </button>
+
+        <div id="mensajeFinal">
+            💬 <strong>Para ti, Michell:</strong><br>
+            "Como nadie te había hecho una página así, yo la hice con mucho cariño, acá está todo lo que te gusta.
+            Espero que te saque una sonrisa. Además, prometo chocolatina real y cuando tenga plata una cabrita
+            (real si se puede). Tú eres única, atenta, reservada y muy chistosa. Mala conmigo pero sí jsjsjs ¿Te gustó?"
+            <p style="margin-top:10px;">💜 Con magia, el que siempre la quiere consentir 💜</p>
+        </div>
+
     </div>
- 
-    <button class="btn-quiz" onclick="abrirQuiz()">❓ ¿Cuánto me conoces? (Quiz)</button>
-    <button class="btn-reiniciar" onclick="location.reload()">Volver a empezar ✦</button>
-  </div>
- 
-</div><!-- #main -->
- 
-<!-- OVERLAY QUIZ -->
-<div id="overlay-quiz">
-  <div class="quiz-box">
-    <h3>❓ ¿Cuánto me conoces?</h3>
-    <p class="quiz-pregunta" id="quiz-pregunta"></p>
-    <div class="quiz-opciones" id="quiz-opciones"></div>
-    <p class="quiz-feedback" id="quiz-feedback"></p>
-    <button class="quiz-cerrar" onclick="cerrarQuiz()">✕ cerrar</button>
-  </div>
-</div>
- 
-<script>
-/* ── ESTADO ── */
-let caidas = 0;
-const TOTAL = 8;
- 
-const PREGUNTAS = [
-  {q:"¿Qué es lo que me gusta de ti? (yo se lo dije)",ops:["mi pelo","mis ojos","todo"],c:2},
-  {q:"¿Cuál es mi comida favorita?",ops:["salchipapa","hamburguesa","todas"],c:0},
-  {q:"¿Qué dulce siempre prometo traerte?",ops:["Gomitas","Chocolate","Helado"],c:1},
-  {q:"Yo soy apego, ¿qué?",ops:["evitativo","cariñoso","ansioso"],c:2},
-  {q:"¿Qué tipo de música me gusta?",ops:["reguetón actual","reguetón clásico","pop"],c:1},
-  {q:"¿Qué deporte siempre digo que eres buena?",ops:["Fútbol","Voleibol","Baloncesto"],c:1}
-];
-let qActual=0, puntos=0;
- 
-/* ── CENIZA AMBIENTAL ── */
-function spawnCeniza(){
-  if(document.body.classList.contains('alive')) return;
-  const c=document.createElement('div');
-  c.className='ceniza';
-  c.textContent=['·','∙','•','‥'][Math.floor(Math.random()*4)];
-  c.style.left=Math.random()*100+'vw';
-  c.style.top='-10px';
-  c.style.animationDuration=(9+Math.random()*14)+'s';
-  c.style.animationDelay=Math.random()*1.5+'s';
-  document.body.appendChild(c);
-  setTimeout(()=>c.remove(),26000);
-}
-setInterval(spawnCeniza,2000);
- 
-/* ── POP CLICK (solo modo vivo) ── */
-document.addEventListener('click',e=>{
-  if(!document.body.classList.contains('alive')) return;
-  const emojis=['💜','✨','🌸','💫','🍇','🎀'];
-  const p=document.createElement('div');
-  p.className='pop-click';
-  p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-  p.style.left=e.clientX+'px';
-  p.style.top=e.clientY+'px';
-  p.style.fontSize='.9rem';
-  document.body.appendChild(p);
-  setTimeout(()=>p.remove(),700);
-});
- 
-/* ── ENTRADA ── */
-function entrar(){
-  const e=document.getElementById('entrada');
-  e.style.opacity='0';
-  setTimeout(()=>{
-    e.style.display='none';
-    document.getElementById('main').style.display='block';
-  },1400);
-}
- 
-/* ── CAER FRAGMENTO ── */
-function caer(el){
-  if(el.dataset.caido) return;
-  el.dataset.caido='1';
-  el.onclick=null;
-  el.classList.add('cayendo');
-  setTimeout(()=>{el.style.visibility='hidden';},760);
- 
-  caidas++;
-  document.getElementById('progreso-bar-fill').style.width=(caidas/TOTAL*100)+'%';
-  document.getElementById('progreso-texto').textContent=caidas+' / '+TOTAL;
- 
-  if(caidas===TOTAL){
-    setTimeout(()=>{
-      document.getElementById('fase-ruinas').style.display='none';
-      document.getElementById('decision').style.display='block';
-    },900);
-  }
-}
- 
-/* ── FINAL OLVIDO ── */
-function finalOlvido(){
-  document.getElementById('btn-group-decision').style.display='none';
-  document.getElementById('decision-pregunta').style.display='none';
-  document.getElementById('decision-sub').style.display='none';
-  document.getElementById('decision-icon').style.display='none';
- 
-  /* grietas */
-  for(let i=0;i<5;i++){
-    const g=document.createElement('div');
-    g.className='grieta';
-    g.style.left=(8+i*18+Math.random()*6)+'%';
-    g.style.animationDelay=(i*1.8)+'s';
-    document.body.appendChild(g);
-  }
- 
-  const fo=document.getElementById('final-olvido');
-  fo.style.display='flex';
- 
-  /* texto se escribe letra a letra */
-  const texto='Gracias por todo.';
-  const el=document.getElementById('olvido-texto-animado');
-  let i=0;
-  setTimeout(()=>{
-    const iv=setInterval(()=>{
-      if(i<texto.length){
-        el.textContent+=texto[i]; i++;
-      } else {
-        clearInterval(iv);
-        /* desvanecimiento final */
-        setTimeout(()=>{
-          document.getElementById('main').style.transition='opacity 6s ease';
-          document.getElementById('main').style.opacity='0';
-          document.body.style.transition='background 6s ease';
-          document.body.style.background='#000';
-        },5500);
-      }
-    },35);
-  },2800);
-}
- 
-/* ── FINAL LUZ ── */
-function finalLuz(){
-  const flash=document.getElementById('flash');
-  flash.style.opacity='1';
-  setTimeout(()=>{
-    document.body.classList.add('alive');
-    document.getElementById('decision').style.display='none';
-    document.getElementById('mundo-vivo').style.display='block';
-    iniciarCorazones();
-    flash.style.transition='opacity 1.4s ease';
-    flash.style.opacity='0';
-  },900);
-}
- 
-/* ── CORAZONES ── */
-function iniciarCorazones(){
-  const emojis=['💜','✨','🌸','💫','🍇','🎀','🌷'];
-  setInterval(()=>{
-    if(!document.body.classList.contains('alive')) return;
-    const c=document.createElement('div');
-    c.className='corazon-float';
-    c.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-    c.style.left=Math.random()*96+'vw';
-    c.style.bottom='-30px';
-    c.style.fontSize=(Math.random()*12+12)+'px';
-    c.style.opacity='1';
-    c.style.transition='transform 5.5s ease-out,opacity 5.5s ease';
-    document.body.appendChild(c);
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      c.style.transform='translateY(-108vh) rotate('+(Math.random()*360)+'deg)';
-      c.style.opacity='0';
-    }));
-    setTimeout(()=>c.remove(),6200);
-  },580);
-}
- 
-/* ── SORPRESA CHOCO ── */
-function sorpresaChoco(){
-  for(let i=0;i<16;i++){
-    setTimeout(()=>{
-      const c=document.createElement('div');
-      c.className='pop-click';
-      c.textContent='🍫';
-      c.style.left=Math.random()*90+'vw';
-      c.style.top=Math.random()*80+'vh';
-      c.style.fontSize='1.6rem';
-      document.body.appendChild(c);
-      setTimeout(()=>c.remove(),800);
-    },i*60);
-  }
-  setTimeout(()=>alert('🍫 Una chocolatina especial (cuando nos veamos) 🍫'),200);
-}
- 
-/* ── LLUVIA CACAO ── */
-function lluviaCacao(){
-  const emojis=['🍫','🍬','💜','✨'];
-  for(let i=0;i<22;i++){
-    setTimeout(()=>{
-      const c=document.createElement('div');
-      c.style.cssText='position:fixed;pointer-events:none;z-index:9990;font-size:1.7rem;transition:transform 3.2s ease,opacity 3.2s ease;';
-      c.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-      c.style.left=Math.random()*100+'vw';
-      c.style.top='-30px';
-      document.body.appendChild(c);
-      requestAnimationFrame(()=>requestAnimationFrame(()=>{
-        c.style.transform='translateY(110vh) rotate(360deg)';
-        c.style.opacity='0';
-      }));
-      setTimeout(()=>c.remove(),3800);
-    },i*75);
-  }
-}
- 
-/* ── QUIZ ── */
-function abrirQuiz(){
-  qActual=0;puntos=0;
-  /* reset caja por si se usó antes */
-  document.querySelector('.quiz-box').innerHTML=`
-    <h3>❓ ¿Cuánto me conoces?</h3>
-    <p class="quiz-pregunta" id="quiz-pregunta"></p>
-    <div class="quiz-opciones" id="quiz-opciones"></div>
-    <p class="quiz-feedback" id="quiz-feedback"></p>
-    <button class="quiz-cerrar" onclick="cerrarQuiz()">✕ cerrar</button>
-  `;
-  document.getElementById('overlay-quiz').style.display='flex';
-  mostrarPregunta();
-}
-function cerrarQuiz(){document.getElementById('overlay-quiz').style.display='none';}
-function mostrarPregunta(){
-  if(qActual>=PREGUNTAS.length){mostrarResultado();return;}
-  const p=PREGUNTAS[qActual];
-  document.getElementById('quiz-pregunta').textContent=p.q;
-  document.getElementById('quiz-feedback').textContent='';
-  const ops=document.getElementById('quiz-opciones');
-  ops.innerHTML='';
-  p.ops.forEach((o,i)=>{
-    const b=document.createElement('button');
-    b.className='btn-opcion';
-    b.textContent=o;
-    b.onclick=()=>responder(i,b);
-    ops.appendChild(b);
-  });
-}
-function responder(idx,btn){
-  const cor=PREGUNTAS[qActual].c;
-  document.querySelectorAll('.btn-opcion').forEach(b=>b.onclick=null);
-  if(idx===cor){
-    btn.classList.add('correcto');puntos+=20;
-    document.getElementById('quiz-feedback').textContent='✅ ¡Correcto!';
-    document.getElementById('quiz-feedback').style.color='#4ade80';
-  } else {
-    btn.classList.add('incorrecto');
-    document.querySelectorAll('.btn-opcion')[cor].classList.add('correcto');
-    document.getElementById('quiz-feedback').textContent='❌ Incorrecto';
-    document.getElementById('quiz-feedback').style.color='#f87171';
-  }
-  setTimeout(()=>{qActual++;mostrarPregunta();},1400);
-}
-function mostrarResultado(){
-  let msj='';
-  if(puntos>=100) msj='Me conoces muy bien, me alegro eso jsjsjs 💜';
-  else if(puntos>=60) msj='No está mal, pero puedes conocerme más.';
-  else msj='Parece que no me prestas mucha atención... 😅';
-  document.querySelector('.quiz-box').innerHTML=`
-    <h3>¡Quiz Terminado!</h3>
-    <p style="font-size:2rem;margin:1.4rem 0;color:var(--text-mid);">${puntos} puntos</p>
-    <p style="font-size:.96rem;color:var(--text-main);margin-bottom:1.2rem;line-height:1.6;">${msj}</p>
-    <p style="font-size:.88rem;font-style:italic;color:var(--text-dim);line-height:1.6;margin-bottom:1.4rem;">
-      Bueno... si me conoces,<br>pero ¿por qué me dejas atrás cuando bajamos del colegio?
-    </p>
-    <button class="btn-quiz" style="margin:0 auto .8rem;" onclick="abrirQuiz()">Hacer de nuevo</button>
-    <button class="quiz-cerrar" onclick="cerrarQuiz()">✕ cerrar</button>
-  `;
-}
-</script>
+
+    <!-- Audio (placeholder) -->
+    <audio id="cancionDulce">
+        <source src="" type="audio/mpeg">
+    </audio>
+
+    <!-- JavaScript externo -->
+    <script src="script.js"></script>
 </body>
+
 </html>
